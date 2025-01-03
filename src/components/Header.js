@@ -26,7 +26,7 @@ export default function Header() {
 
     return (
         <header style={headerStyle}>
-            <h1>TrouTrou</h1>
+            <h1 onClick={() => window.location.href = '/'} style={{ cursor: 'pointer' }}>TrouTrou</h1>
             <nav style={navStyle}>
                 {!localStorage.getItem('username') && (<>
                     <button style={buttonStyle} onClick={() => window.location.href = '/login'}>

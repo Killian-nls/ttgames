@@ -1,43 +1,57 @@
 import React, { useEffect, useState } from 'react';
 import GameBtn from './min/GameBtn';
+import CreateBtn from './min/CreateBtn';
 import axios from 'axios';
 
-export default function Game() {
+export default function GameLobby() {
   const [games, setGames] = useState([]);
 
   useEffect(() => {
     const fetchGames = async () => {
-      const response = await axios.get('http://localhost:3001/getGames');
-      setGames(response.data.games);
+      const protocol = process.env.REACT_APP_PROTOCOL;
+      const host = process.env.REACT_APP_HOST;
+      const port = process.env.REACT_APP_BACKPORT;
+
+      console.log(protocol);
+
+      if (!protocol || !host || !port) {
+        console.error('Missing environment variables for API URL');
+        return;
+      }
+
+      const url = `${protocol}://${host}:${port}/getGames`;
+
+      try {
+        const response = await axios.get(url);
+        setGames(response.data.games);
+      } catch (error) {
+        console.error('Error fetching games:', error);
+      }
     };
     fetchGames();
   }, []);
 
   const gridStyle = {
     display: 'grid',
-    gridTemplateColumns: 'repeat(5, 1fr)',
-    gap: '10px',
-    justifyContent: 'center',
-    alignItems: 'center',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+    overflowY: 'scroll',
+    scrollbarWidth: 'none',
+    msOverflowStyle: 'none',
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+    gap: '5vw',
+    padding: '2vh 2vw',
     backgroundColor: '#353840',
-    height: '80vh',
-    width: '100%',
-  };
-  
-  const containerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '80vh',
+    minHeight: '80vmin',
   };
 
   return (
-    <div style={containerStyle}>
       <div style={gridStyle}>
         {games.map(game => (
-          <GameBtn key={game.id} name={game.name} imgUrl={game.imgUrl} />
+          <GameBtn key={game.id} game={game} />
         ))}
+        <CreateBtn />
       </div>
-    </div>
   );
 }

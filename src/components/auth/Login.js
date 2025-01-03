@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import bcrypt from 'bcryptjs';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -9,8 +8,18 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const protocol = process.env.REACT_APP_PROTOCOL;
+        const host = process.env.REACT_APP_HOST;
+        const port = process.env.REACT_APP_BACKPORT;
+
+        if (!protocol || !host || !port) {
+            console.error('Missing environment variables for API URL');
+            return;
+        }
+
+        const url = `${protocol}://${host}:${port}/login`;
         try {
-            const response = await axios.post('http://localhost:3001/login', { "email" : email, "password" : password }, { headers: { 'Access-Control-Allow-Origin': '*' } });
+            const response = await axios.post(url, { "email" : email, "password" : password }, { headers: { 'Access-Control-Allow-Origin': '*' } });
             if (response.status === 200) {
                 localStorage.setItem('username', response.data.username);
                 window.location.href = '/';    

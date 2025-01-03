@@ -1,5 +1,4 @@
 import React from 'react';
-// import './GameBtn.css';
 
 function importAll(r) {
   let images = {};
@@ -9,8 +8,8 @@ function importAll(r) {
 
 const images = importAll(require.context('../../assets/images', false, /\.(png|jpe?g|svg)$/));
 
-export default function GameBtn({ name, imgUrl }) {
-  const imagePath = images[imgUrl];
+export default function GameBtn({ game }) {
+  const imagePath = images[game.imgUrl];
 
   const getRandomPastelColor = () => {
       const r = Math.floor(Math.random() * 127 + 127);
@@ -23,8 +22,8 @@ export default function GameBtn({ name, imgUrl }) {
       backgroundColor: getRandomPastelColor(),
       borderRadius: '15px',
       display: 'flex',
-      width : '200px',
-      height : '200px',
+      width : '30vw',
+      height : '40vh',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
@@ -36,8 +35,7 @@ export default function GameBtn({ name, imgUrl }) {
   };
   
   const imageStyle = {
-      maxWidth: '100%',
-      maxHeight: '100px',
+    width: '10vw',
   };
   
   const handleMouseEnter = (e) => {
@@ -47,15 +45,21 @@ export default function GameBtn({ name, imgUrl }) {
   const handleMouseLeave = (e) => {
       e.currentTarget.style.transform = 'scale(1)';
   };
+
+  const handleClick = () => {
+      window.location.href = `/game/${game.id}`;
+  };
   
   return (
       <div
           style={cardStyle}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onClick={handleClick}
       >
-          <img src={imagePath} alt={name} style={imageStyle} />
-          <h3>{name}</h3>
+          <img src={imagePath} alt={game.name} style={imageStyle} />
+          <h3>{game.name}</h3>
+          <p>{game.nbPlayers}/{game.nbPlayersMax} Joueurs</p>
       </div>
   );
 }

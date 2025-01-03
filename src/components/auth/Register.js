@@ -16,9 +16,21 @@ function Register() {
             return;
         }
 
+        const protocol = process.env.REACT_APP_PROTOCOL;
+        const host = process.env.REACT_APP_HOST;
+        const port = process.env.REACT_APP_BACKPORT;
+
+        if (!protocol || !host || !port) {
+            console.error('Missing environment variables for API URL');
+            return;
+        }
+
+        const url = `${protocol}://${host}:${port}/register`;
+
         try {
             const hashedPassword = await bcrypt.hash(password, 10);
-            const response = await axios.post('http://localhost:3001/register', { "email" : email, "password" : hashedPassword, "username" : username }, { headers: { 'Access-Control-Allow-Origin': '*' } });
+            const response = await axios.post(url, { "email" : email, "password" : hashedPassword, "username" : username }, { headers: { 'Access-Control-Allow-Origin': '*' } });
+            console.log(response.data);
             localStorage.setItem('username', response.data.username);
             window.location.href = '/';
         } catch (error) {

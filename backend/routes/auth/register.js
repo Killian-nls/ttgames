@@ -11,12 +11,12 @@ router.post('/', (req, res) => {
         if (row) {
             return res.status(400).send({ message: 'Username or email already exists' });
         }
-        const stmt = db.prepare("INSERT INTO users VALUES (?, ?, ?)");
+        const stmt = db.prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, 'user')");
         stmt.run(username, email, password, (err) => {
             if (err) {
                 res.status(500).send(`Error inserting user: ${err.message}`);
             } else {
-                res.status(200).send({ message: 'User registered successfully' });
+                res.status(200).send({ message: 'User registered successfully', username: username });
             }
         });
         stmt.finalize();

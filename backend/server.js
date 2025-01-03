@@ -7,6 +7,8 @@ const loginRoute = require('./routes/auth/login');
 const addGameRoute = require('./routes/games/addGame');
 const getGamesRoute = require('./routes/games/getGames');
 const debugGetUsersRoute = require('./routes/debug/debugGetUsers');
+const fs = require('fs');
+const path = require('path');
 const app = express();
 const port = 3001;
 
@@ -16,10 +18,17 @@ app.use(bodyParser.json());
 
 const db = new sqlite3.Database(':memory:');
 
+const sqlFilePath = path.join(__dirname, 'tables.sql');
+const sql = fs.readFileSync(sqlFilePath, 'utf8');
+
 db.serialize(() => {
-    db.run("CREATE TABLE IF NOT EXISTS users (username TEXT, email TEXT, password TEXT)");
-    db.run("CREATE TABLE IF NOT EXISTS games (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, imgUrl TEXT)");
-    db.run("INSERT INTO games (name, imgUrl) VALUES ('Poker', 'poker.png'), ('Chess', 'chess.png'), ('Checkers', 'checkers.png')");
+    db.exec(sql, (err) => {
+        if (err) {
+            console.error('Error executing SQL script:', err.message);
+        } else {
+            console.log('Database initialized successfully');
+        }
+    });
 });
 
 app.set('db', db);
